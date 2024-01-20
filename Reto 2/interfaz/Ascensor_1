@@ -1,0 +1,90 @@
+"""
+Reto #2 Control de llamado del ascensor en 4 pisos
+
+Realizado por:
+- Jacobo Chica Quintero
+- Sara Alvarez Bello
+- Juan Diego Agudelo
+"""
+
+# Librerias
+import RPi.GPIO as IO
+import time
+
+# Estados
+stop = 0
+up = 1
+down = 2
+hold_up = 3
+hold_down = 4
+
+# Entradas y salidas
+piso_1 = 3
+piso_2 = 4
+piso_3 = 17
+piso_4 = 27
+
+boton_1up = 6
+boton_2down = 13
+boton_2up = 19
+boton_3down = 26
+boton_3up = 
+boton_4down =
+
+motor_down = 15
+motor_up = 14
+motor_vel = 200
+
+retorno_1up = 7
+retorno_2down = 12
+retorno_2up = 16
+retorno_3down = 20
+retorno_3up = 21
+retorno_4down
+
+# Variables
+time_i = 0.0
+time_a = 0.0
+time_r = 0.0
+state = stop
+
+# Pin setup
+IO.setmode(IO.BOARD)
+
+IO.setup(motor_down, IO.OUT)
+IO.setup(motor_up, IO.OUT)
+IO.setup(motor_vel, IO.OUT)
+IO.setup(retorno_1up, IO.OUT)
+IO.setup(retorno_2down, IO.OUT)
+IO.setup(retorno_2up, IO.OUT)
+IO.setup(retorno_3down, IO.OUT)
+IO.setup(retorno_3up, IO.OUT)
+IO.setup(retorno_4down, IO.OUT)
+
+IO.setup(piso_1, IO.IN)
+IO.setup(piso_2, IO.IN)
+IO.setup(piso_3, IO.IN)
+IO.setup(piso_4, IO.IN)
+IO.setup(boton_1up, IO.IN)
+IO.setup(boton_2down, IO.IN)
+IO.setup(boton_2up, IO.IN)
+IO.setup(boton_3down, IO.IN)
+IO.setup(boton_3up, IO.IN)
+IO.setup(boton_4down, IO.IN)
+
+# Reset salidas
+IO.output(motor_down, 0)
+IO.output(motor_up, 0)
+
+time_i = time.time()
+
+# Funciones
+
+def stop():
+    # Variables globales
+    global time_i
+    global state
+
+    # Acciones
+    IO.output(motor_down, 0)
+    IO.output(motor_up, 0)

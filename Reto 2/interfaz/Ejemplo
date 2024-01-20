@@ -1,0 +1,201 @@
+#Library declaration
+import RPi.GPIO as GPIO
+import time
+
+state=0
+
+#sensores pisos
+sp1=3
+sp2=4
+sp3=17
+sp4=27
+
+#botones
+ps1=6
+pb2=13
+ps2=19
+pb3=26
+ps3=5
+pb4=24
+
+#motores
+subir=14
+bajar=15
+abrir=18
+cerrar=23
+# retorno de los botones
+rs1=7
+rb2=12
+rs2=16
+rb3=20
+rs3=21
+rb4=25
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(sp1,GPIO.IN)
+GPIO.setup(sp2,GPIO.IN)
+GPIO.setup(sp3,GPIO.IN)
+GPIO.setup(sp4,GPIO.IN)
+
+GPIO.setup(ps1,GPIO.IN)
+GPIO.setup(pb2,GPIO.IN)
+GPIO.setup(ps2,GPIO.IN)
+GPIO.setup(pb3,GPIO.IN)
+GPIO.setup(ps3,GPIO.IN)
+GPIO.setup(pb4,GPIO.IN)
+
+ms1=0
+mb2=0
+ms2=0
+mb3=0
+ms3=0
+mb4=0
+
+GPIO.setup(subir,GPIO.OUT)
+GPIO.setup(bajar,GPIO.OUT)
+GPIO.setup(abrir,GPIO.OUT)
+GPIO.setup(cerrar,GPIO.OUT)
+GPIO.setup(rs1,GPIO.OUT)
+GPIO.setup(rb2,GPIO.OUT)
+GPIO.setup(rs2,GPIO.OUT)
+GPIO.setup(rb3,GPIO.OUT)
+GPIO.setup(rs3,GPIO.OUT)
+GPIO.setup(rb4,GPIO.OUT)
+GPIO.setwarnings(False)
+
+GPIO.output(bajar, 0)
+GPIO.output(subir, 0)
+GPIO.output(abrir, 0)
+GPIO.output(cerrar, 0)
+
+GPIO.output(rs1, 0)
+GPIO.output(rs2, 0)
+GPIO.output(rb2, 0)
+GPIO.output(rs3, 0)
+GPIO.output(rb3, 0)
+GPIO.output(rb4, 0)
+
+
+
+def detect():
+    global state
+    
+    if GPIO.input(ps1) == 1 :
+        GPIO.output(rs1, 1)
+        ms1=1
+        state=1
+    elif GPIO.input(ps2) == 1 :
+        GPIO.output(rs2, 1)
+        ms2=1
+        state=2
+    elif GPIO.input(pb2) == 1 :
+        GPIO.output(rb2, 1)
+        mb2=1
+        state=2
+    elif GPIO.input(ps3) == 1 :
+        GPIO.output(rs3, 1)
+        ms3=1
+        state=3
+    elif GPIO.input(pb3) == 1 :
+        GPIO.output(rb3, 1)
+        mb3=1
+        state=3
+    elif GPIO.input(pb4) == 1 :
+        GPIO.output(rb4, 1)
+        mb4=1
+        state=4
+        print(state)
+        
+def piso1():
+    global state
+    if GPIO.input(sp2)==1 or GPIO.input(sp3)==1 or GPIO.input(sp4)==1:
+        GPIO.output(bajar, 1)
+    state=5
+    print(state)
+    
+def piso2():
+    global state
+    if GPIO.input(sp3)==1 or GPIO.input(sp4)==1:
+        GPIO.output(bajar, 1)
+    elif GPIO.input(sp1)==1:
+        GPIO.output(subir, 1)
+    state=6
+    print(state)
+    
+def piso3():
+    global state
+    if GPIO.input(sp2)==1 or GPIO.input(sp1)==1:
+        GPIO.output(subir, 1)
+    elif GPIO.input(sp4)==1:
+        GPIO.output(bajar, 1)
+    state=7
+    print(state)
+
+def piso4():
+    global state
+    if GPIO.input(sp1)==1 or GPIO.input(sp2)==1 or GPIO.input(sp3)==1:
+        GPIO.output(subir, 1)
+    state=8
+    print(state)
+
+def pare1():
+    global state
+    if GPIO.input(sp1)==1:
+        GPIO.output(bajar, 0)
+        GPIO.output(subir, 0)
+        GPIO.output(rs1, 0)
+        state=0
+    print(state)
+        
+def pare2():
+    global state
+    if GPIO.input(sp2)==1:
+        GPIO.output(bajar, 0)
+        GPIO.output(subir, 0)
+        GPIO.output(rs2, 0)
+        GPIO.output(rb2, 0)
+        state=0
+    print(state)
+
+def pare3():
+    global state
+    if GPIO.input(sp3)==1:
+        GPIO.output(bajar, 0)
+        GPIO.output(subir, 0)
+        GPIO.output(rs3, 0)
+        GPIO.output(rb3, 0)
+        state=0
+    print(state)
+
+def pare4():
+    global state
+    if GPIO.input(sp4)==1:
+        GPIO.output(bajar, 0)
+        GPIO.output(subir, 0)
+        GPIO.output(rb4, 0)
+        state=0
+    print(state)
+
+
+
+FSM = {0: detect,
+       1: piso1,
+       2: piso2,
+       3: piso3,
+       4: piso4,
+       5: pare1,
+       6: pare2,
+       7: pare3,
+       8: pare4,
+       
+}
+
+while True:
+    
+    tact = time.time() #Acquire actual time
+    FSM[state]()   
+
+
+
+
+
